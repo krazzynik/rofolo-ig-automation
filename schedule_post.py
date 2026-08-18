@@ -1,8 +1,7 @@
 import os
 import json
-import tempfile
+import time
 import requests
-from PIL import Image
 
 # ==========================================
 # CONFIGURATION
@@ -14,7 +13,6 @@ QUEUE_FILE = "scheduled_queue.json"
 IMAGES_DIR = "images"
 CONTENT_DIR = "content"
 
-# GitHub Repo Details for Raw Image URLs
 GITHUB_REPO = os.environ.get("GITHUB_REPOSITORY", "krazzynik/rofolo-ig-automation")
 GITHUB_BRANCH = "main"
 
@@ -63,12 +61,40 @@ def get_github_raw_url(filename):
     return raw_url
 
 
+def wait_for_container_ready(creation_id, max_attempts=10, delay=5):
+    """Polls Meta Graph API until the media container processing is FINISHED."""
+    print(f"Waiting for Meta container {creation_id} to finish processing...")
+    status_url = f"https://graph.facebook.com/v21.0/{creation_id}"
+    
+    for attempt in range(1, max_attempts + 1):
+        time.sleep(delay)
+        res = requests.get(
+            status_url,
+            params={
+                "fields": "status_code",
+                "access_token": ACCESS_TOKEN
+            }
+        ).json()
+        
+        status_code = res.get("status_code")
+        print(f"Attempt {attempt}/{max_attempts}: Container status = {status_code}")
+        
+        if status_code == "FINISHED":
+            return True
+        elif status_code == "ERROR":
+            print("Container processing failed on Meta's end:", res)
+            return False
+            
+    print("Timed out waiting for Meta container to be ready.")
+    return False
+
+
 # ==========================================
 # EXECUTION FLOW
 # ==========================================
 if not os.path.exists(QUEUE_FILE):
     print("ERROR: scheduled_queue.json not found.")
-    exit()
+    exit(1)
 
 with open(QUEUE_FILE, "r", encoding="utf-8") as f:
     queue = json.load(f)
@@ -82,7 +108,7 @@ for item in queue:
 
 if not next_item:
     print("No pending posts found in queue. All done!")
-    exit()
+    exit(0)
 
 post_id = next_item["id"]
 image_path, filename = find_image_file(post_id)
@@ -90,11 +116,9 @@ txt_path = os.path.join(CONTENT_DIR, f"{post_id}.txt")
 
 if not image_path or not os.path.exists(txt_path):
     print(f"ERROR: Missing image or text file for post ID '{post_id}'")
-    exit()
+    exit(1)
 
 caption, user_tags = parse_txt_file(txt_path)
-
-# Construct direct raw GitHub URL
 public_url = get_github_raw_url(filename)
 
 print(f"\nCreating Meta Container for {post_id}...")
@@ -113,23 +137,30 @@ container_res = requests.post(
 creation_id = container_res.get("id")
 
 if creation_id:
-    print("Publishing to Instagram...")
-    publish_res = requests.post(
-        f"https://graph.facebook.com/v21.0/{IG_USER_ID}/media_publish",
-        params={
-            "creation_id": creation_id,
-            "access_token": ACCESS_TOKEN
-        },
-    ).json()
+    # Wait for Meta to process the image URL before publishing
+    if wait_for_container_ready(creation_id):
+        print("Publishing to Instagram...")
+        publish_res = requests.post(
+            f"https://graph.facebook.com/v21.0/{IG_USER_ID}/media_publish",
+            params={
+                "creation_id": creation_id,
+                "access_token": ACCESS_TOKEN
+            },
+        ).json()
 
-    if "id" in publish_res:
-        print(f"🎉 SUCCESS! {post_id} published! Post ID:", publish_res.get("id"))
-        
-        # Update status in queue file
-        next_item["status"] = "published"
-        with open(QUEUE_FILE, "w", encoding="utf-8") as f:
-            json.dump(queue, f, indent=2)
+        if "id" in publish_res:
+            print(f"🎉 SUCCESS! {post_id} published! Post ID:", publish_res.get("id"))
+            
+            # Update status in queue
+            next_item["status"] = "published"
+            with open(QUEUE_FILE, "w", encoding="utf-8") as f:
+                json.dump(queue, f, indent=2)
+        else:
+            print("Publish failed:", publish_res)
+            exit(1)
     else:
-        print("Publish failed:", publish_res)
+        print("Aborting publish: Container was not ready in time.")
+        exit(1)
 else:
     print("Container creation failed:", container_res)
+    exit(1)
