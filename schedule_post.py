@@ -72,13 +72,20 @@ def convert_image_to_jpeg(input_path):
 def upload_to_catbox(file_path):
     print("Uploading to Catbox...")
     url = "https://catbox.moe/user/api.php"
+    
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Python-Requests/2.31.0"
+    }
+    
+    data = {
+        "reqtype": "fileupload"
+    }
 
     with open(file_path, "rb") as file:
         files = {
-            "reqtype": (None, "fileupload"),
-            "fileToUpload": file
+            "fileToUpload": ("image.jpg", file, "image/jpeg")
         }
-        res = requests.post(url, files=files)
+        res = requests.post(url, headers=headers, data=data, files=files)
 
     if res.status_code == 200 and res.text.startswith("https://"):
         return res.text.strip()
