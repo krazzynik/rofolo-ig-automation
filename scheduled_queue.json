@@ -1,14 +1,14 @@
 [
   {
     "id": "post_01",
-    "status": "published"
+    "status": "pending"
   },
   {
     "id": "post_02",
-    "status": "published"
+    "status": "pending"
   },
   {
     "id": "post_03",
-    "status": "published"
+    "status": "pending"
   }
 ]
