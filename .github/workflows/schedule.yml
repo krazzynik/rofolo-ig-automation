@@ -2,8 +2,11 @@ name: Automated Instagram Queue
 
 on:
   schedule:
-    - cron: '0 9 * * *' # Runs daily at 09:00 UTC
-  workflow_dispatch: # Allows manual trigger from GitHub UI
+    - cron: '0 9 * * *' # Daily at 09:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   run-queue:
