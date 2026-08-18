@@ -14,6 +14,10 @@ QUEUE_FILE = "scheduled_queue.json"
 IMAGES_DIR = "images"
 CONTENT_DIR = "content"
 
+# GitHub Repo Details for Raw Image URLs
+GITHUB_REPO = os.environ.get("GITHUB_REPOSITORY", "krazzynik/rofolo-ig-automation")
+GITHUB_BRANCH = "main"
+
 # ==========================================
 # HELPER FUNCTIONS
 # ==========================================
@@ -48,49 +52,15 @@ def find_image_file(post_id):
     for ext in [".jpg", ".jpeg", ".png", ".webp", ".jfif"]:
         path = os.path.join(IMAGES_DIR, f"{post_id}{ext}")
         if os.path.exists(path):
-            return path
-    return None
+            return path, f"{post_id}{ext}"
+    return None, None
 
 
-def convert_image_to_jpeg(input_path):
-    print(f"Converting {input_path} to JPEG...")
-    temp_jpg = tempfile.NamedTemporaryFile(delete=False, suffix=".jpg")
-
-    with Image.open(input_path) as img:
-        if img.mode in ("RGBA", "LA", "P"):
-            background = Image.new("RGB", img.size, (255, 255, 255))
-            if img.mode == "P":
-                img = img.convert("RGBA")
-            background.paste(img, mask=img.split()[-1])
-            background.save(temp_jpg.name, "JPEG", quality=95)
-        else:
-            img.convert("RGB").save(temp_jpg.name, "JPEG", quality=95)
-
-    return temp_jpg.name
-
-
-def upload_to_catbox(file_path):
-    print("Uploading to Catbox...")
-    url = "https://catbox.moe/user/api.php"
-    
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Python-Requests/2.31.0"
-    }
-    
-    data = {
-        "reqtype": "fileupload"
-    }
-
-    with open(file_path, "rb") as file:
-        files = {
-            "fileToUpload": ("image.jpg", file, "image/jpeg")
-        }
-        res = requests.post(url, headers=headers, data=data, files=files)
-
-    if res.status_code == 200 and res.text.startswith("https://"):
-        return res.text.strip()
-    else:
-        raise Exception(f"Catbox upload failed: {res.text}")
+def get_github_raw_url(filename):
+    """Generates direct, raw HTTPS GitHub URL for Meta to download."""
+    raw_url = f"https://raw.githubusercontent.com/{GITHUB_REPO}/{GITHUB_BRANCH}/{IMAGES_DIR}/{filename}"
+    print(f"Generated Public GitHub Image URL: {raw_url}")
+    return raw_url
 
 
 # ==========================================
@@ -115,7 +85,7 @@ if not next_item:
     exit()
 
 post_id = next_item["id"]
-image_path = find_image_file(post_id)
+image_path, filename = find_image_file(post_id)
 txt_path = os.path.join(CONTENT_DIR, f"{post_id}.txt")
 
 if not image_path or not os.path.exists(txt_path):
@@ -123,48 +93,43 @@ if not image_path or not os.path.exists(txt_path):
     exit()
 
 caption, user_tags = parse_txt_file(txt_path)
-jpeg_path = convert_image_to_jpeg(image_path)
 
-try:
-    public_url = upload_to_catbox(jpeg_path)
+# Construct direct raw GitHub URL
+public_url = get_github_raw_url(filename)
 
-    print(f"\nCreating Meta Container for {post_id}...")
-    container_params = {
-        "image_url": public_url,
-        "caption": caption,
-        "user_tags": json.dumps(user_tags),
-        "access_token": ACCESS_TOKEN,
-    }
+print(f"\nCreating Meta Container for {post_id}...")
+container_params = {
+    "image_url": public_url,
+    "caption": caption,
+    "user_tags": json.dumps(user_tags),
+    "access_token": ACCESS_TOKEN,
+}
 
-    container_res = requests.post(
-        f"https://graph.facebook.com/v21.0/{IG_USER_ID}/media",
-        params=container_params,
+container_res = requests.post(
+    f"https://graph.facebook.com/v21.0/{IG_USER_ID}/media",
+    params=container_params,
+).json()
+
+creation_id = container_res.get("id")
+
+if creation_id:
+    print("Publishing to Instagram...")
+    publish_res = requests.post(
+        f"https://graph.facebook.com/v21.0/{IG_USER_ID}/media_publish",
+        params={
+            "creation_id": creation_id,
+            "access_token": ACCESS_TOKEN
+        },
     ).json()
 
-    creation_id = container_res.get("id")
-
-    if creation_id:
-        print("Publishing to Instagram...")
-        publish_res = requests.post(
-            f"https://graph.facebook.com/v21.0/{IG_USER_ID}/media_publish",
-            params={
-                "creation_id": creation_id,
-                "access_token": ACCESS_TOKEN
-            },
-        ).json()
-
-        if "id" in publish_res:
-            print(f"🎉 SUCCESS! {post_id} published! Post ID:", publish_res.get("id"))
-            
-            # Update status in queue
-            next_item["status"] = "published"
-            with open(QUEUE_FILE, "w", encoding="utf-8") as f:
-                json.dump(queue, f, indent=2)
-        else:
-            print("Publish failed:", publish_res)
+    if "id" in publish_res:
+        print(f"🎉 SUCCESS! {post_id} published! Post ID:", publish_res.get("id"))
+        
+        # Update status in queue file
+        next_item["status"] = "published"
+        with open(QUEUE_FILE, "w", encoding="utf-8") as f:
+            json.dump(queue, f, indent=2)
     else:
-        print("Container creation failed:", container_res)
-
-finally:
-    if os.path.exists(jpeg_path):
-        os.remove(jpeg_path)
+        print("Publish failed:", publish_res)
+else:
+    print("Container creation failed:", container_res)
