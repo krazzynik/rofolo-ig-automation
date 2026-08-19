@@ -23,12 +23,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests
 
-      - name: Publish Reel
+      - name: Process Queue
         env:
           INSTAGRAM_ACCOUNT_ID: ${{ secrets.INSTAGRAM_ACCOUNT_ID }}
           INSTAGRAM_ACCESS_TOKEN: ${{ secrets.INSTAGRAM_ACCESS_TOKEN }}
           RAW_IMAGE_BASE_URL: ${{ secrets.RAW_IMAGE_BASE_URL }}
-        run: python publish_reel.py
+        run: python schedule_reel.py
 
       - name: Commit Updated Reels Queue
         uses: stefanzweifel/git-auto-commit-action@v5
