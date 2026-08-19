@@ -6,7 +6,10 @@ import textwrap
 import time
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
-from moviepy.editor import VideoClip
+try:
+    from moviepy.editor import VideoClip
+except ImportError:
+    from moviepy import VideoClip
 from google import genai
 from google.genai import types
 
@@ -34,7 +37,7 @@ TOPICS = [
     "workplace drama and dealing with people who talk behind your back"
 ]
 
-MODELS_TO_TRY = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash']
+MODELS_TO_TRY = ['gemini-3.5-flash', 'gemini-3.6-flash', 'gemini-3.4-flash']
 
 # ==========================================
 # INCREMENTAL REEL ID (e.g. reel_001)
@@ -115,22 +118,27 @@ def create_typing_reel():
     except Exception:
         font = ImageFont.load_default()
 
+    # Pre-wrap full text so layout coordinates stay anchored during typing animation
     wrapped_lines = textwrap.wrap(quote_text, width=22)
     full_text = "\n".join(wrapped_lines)
 
+    # Compute target bounding box for the FULL completed text
     dummy_draw = ImageDraw.Draw(base_bg)
-    bbox = dummy_draw.multiline_textbbox((0, 0), full_text, font=font, align="center")
+    bbox = dummy_draw.multiline_textbbox((0, 0), full_text, font=font, align="left")
     text_w = bbox[2] - bbox[0]
     text_h = bbox[3] - bbox[1]
 
-    x = (img_w - text_w) / 2
+    # Anchor to the fixed LEFT coordinate so text types naturally from left-to-right
+    start_x = (img_w - text_w) / 2
     bottom_padding = int(img_h * 0.12)
-    y = img_h - text_h - bottom_padding
+    start_y = img_h - text_h - bottom_padding
 
-    TYPING_DURATION = 2.5
-    HOLD_DURATION = 3.5
+    # Video Timing Settings (Slower typing speed for readability)
+    TYPING_DURATION = 4.0  # Increased from 2.5s -> 4.0s for comfortable reading speed
+    HOLD_DURATION = 3.5    # Hold full quote static before video ends
     TOTAL_DURATION = TYPING_DURATION + HOLD_DURATION
 
+    # Frame generator function called by MoviePy
     def make_frame(t):
         if t < TYPING_DURATION:
             progress = t / TYPING_DURATION
@@ -138,12 +146,20 @@ def create_typing_reel():
         else:
             visible_chars = len(quote_text)
 
+        # Truncate raw string and wrap
         current_raw = quote_text[:visible_chars]
         current_wrapped = "\n".join(textwrap.wrap(current_raw, width=22))
 
+        # Render frame anchored at static start_x, start_y using left alignment
         frame_img = base_bg.copy()
         draw = ImageDraw.Draw(frame_img)
-        draw.multiline_text((x, y), current_wrapped, fill=(255, 255, 255), font=font, align="center")
+        draw.multiline_text(
+            (start_x, start_y), 
+            current_wrapped, 
+            fill=(255, 255, 255), 
+            font=font, 
+            align="left"  # <--- CRITICAL: Keeps left margin locked in place
+        )
 
         return np.array(frame_img)
 
