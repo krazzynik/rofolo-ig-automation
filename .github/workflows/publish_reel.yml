@@ -3,7 +3,7 @@ name: 4. Publish Reel to Instagram
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 * * * *'  # Runs daily at 16:00 UTC
+    - cron: '0 */6 * * *'  # Runs daily at 16:00 UTC
 
 jobs:
   publish_reel:
