@@ -25,8 +25,8 @@ jobs:
 
       - name: Process Queue
         env:
-          INSTAGRAM_ACCOUNT_ID: ${{ secrets.INSTAGRAM_ACCOUNT_ID }}
-          INSTAGRAM_ACCESS_TOKEN: ${{ secrets.INSTAGRAM_ACCESS_TOKEN }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
           RAW_IMAGE_BASE_URL: ${{ secrets.RAW_IMAGE_BASE_URL }}
         run: python schedule_reel.py
 
