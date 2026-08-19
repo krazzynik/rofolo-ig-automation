@@ -13,6 +13,10 @@
   },
   {
     "id": "post_05",
+    "status": "published"
+  },
+  {
+    "id": "post_06",
     "status": "pending"
   }
 ]
