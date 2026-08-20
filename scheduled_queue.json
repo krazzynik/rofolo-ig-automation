@@ -22,5 +22,9 @@
   {
     "id": "post_07",
     "status": "published"
+  },
+  {
+    "id": "post_08",
+    "status": "pending"
   }
 ]
