@@ -34,5 +34,9 @@
   {
     "id": "post_10",
     "status": "published"
+  },
+  {
+    "id": "post_11",
+    "status": "pending"
   }
 ]
