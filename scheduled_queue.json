@@ -74,5 +74,9 @@
   {
     "id": "post_20",
     "status": "published"
+  },
+  {
+    "id": "post_21",
+    "status": "pending"
   }
 ]
