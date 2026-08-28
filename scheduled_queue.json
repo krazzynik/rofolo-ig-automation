@@ -90,5 +90,9 @@
   {
     "id": "post_24",
     "status": "published"
+  },
+  {
+    "id": "post_25",
+    "status": "pending"
   }
 ]
