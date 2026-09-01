@@ -387,8 +387,13 @@
     "id": "reel_049",
     "video_path": "reels/reel_049.mp4",
     "caption": "Sorry not sorry that my boundaries don't fit into your comfort zone 💅 If living life on my own terms makes me 'bad', then darling, I’m the villain you can't get rid of 👻🤪 Keep taking notes while I keep doing me 💣\n\nShare this with someone who is tired of being called 'attitude-waali'! 👇\n\n#AttitudeProblem #MyRules #SassyQuotes #Hinglish #SorryNotSorry",
-    "status": "pending",
-    "created_at": "2026-08-31 01:49:08"
+    "status": "published",
+    "created_at": "2026-08-31 01:49:08",
+    "publisher": "instagram_only",
+    "publishing_started_at": "2026-09-01T08:55:53+00:00",
+    "instagram_creation_id": "18105629614910955",
+    "instagram_media_id": "18101798903351740",
+    "published_at": "2026-09-01T08:56:36+00:00"
   },
   {
     "id": "reel_050",
@@ -412,8 +417,8 @@
     "created_at": "2026-09-01 02:12:05"
   },
   {
-  "id": "reel_test_01",
-  "video_path": "reel_test_01.mp4",
-  "status": "pending"
+    "id": "reel_test_01",
+    "video_path": "reel_test_01.mp4",
+    "status": "pending"
   }
 ]
