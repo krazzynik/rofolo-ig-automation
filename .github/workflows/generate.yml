@@ -28,8 +28,8 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python generate_image.py
 
-      - name: Commit New Assets
+      - name: Commit New Assets and ID State
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Auto-generated post assets [skip ci]"
-          file_pattern: "images/* content/* scheduled_queue.json"
+          file_pattern: "images/* content/* scheduled_queue.json content_state.json"
