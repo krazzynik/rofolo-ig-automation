@@ -1,13 +1,16 @@
-name: FB + Instagram - Publish Reel
+name: Publish - FB + Instagram - Reel
+
 on:
   workflow_dispatch:
+
 jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
-        with: {python-version: "3.x"}
+        with:
+          python-version: "3.x"
       - run: pip install -r requirements.txt
       - run: python schedule_fb_instagram_reel.py
         env:
