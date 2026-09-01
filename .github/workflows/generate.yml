@@ -1,9 +1,7 @@
-name: 1. Generate Daily Content
+name: Generate - Post
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 */12 * * *'
 
 jobs:
   generate:
