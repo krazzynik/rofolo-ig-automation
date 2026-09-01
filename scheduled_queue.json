@@ -124,7 +124,12 @@
     "status": "published"
   },
   {
-  "id": "post_test_01",
-  "status": "pending"
+    "id": "post_test_01",
+    "status": "published",
+    "publisher": "instagram_only",
+    "publishing_started_at": "2026-09-01T08:48:46+00:00",
+    "instagram_creation_id": "18105628906910955",
+    "instagram_media_id": "18113219755797029",
+    "published_at": "2026-09-01T08:49:08+00:00"
   }
 ]
