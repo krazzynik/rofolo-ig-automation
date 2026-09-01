@@ -1,11 +1,18 @@
 # Rofolo Instagram Automation
 
-This repository contains two explicit publishing paths. The legacy FB + Instagram path is `schedule_fb_instagram_post.py` and `schedule_fb_instagram_reel.py`; it retains `IG_USER_ID` and `ACCESS_TOKEN`. The Instagram-only path is `schedule_instagram_only_post.py` and `schedule_instagram_only_reel.py`; it uses only `INSTAGRAM_ONLY_USER_ID` and `INSTAGRAM_ONLY_ACCESS_TOKEN` with `https://graph.instagram.com`.
+The repository has two publishing paths. The legacy FB + Instagram scripts are `schedule_fb_instagram_post.py` and `schedule_fb_instagram_reel.py`. The Instagram-only scripts are `schedule_instagram_only_post.py` and `schedule_instagram_only_reel.py`; they use only `INSTAGRAM_ONLY_USER_ID` and `INSTAGRAM_ONLY_ACCESS_TOKEN` with `https://graph.instagram.com`.
 
-The Instagram-only workflows are `workflow_dispatch` only, with no cron. Configure both Instagram-only repository secrets, then run the appropriate workflow manually. The workflow sets `INSTAGRAM_GRAPH_API_VERSION` to `v23.0`.
+Generation uses shared guidance in `content_style.py`. Posts and reels rotate across desi family, relationships, relatives, workplace chaos, food, money, friendship, laziness, self-respect, social media, bad luck, and other daily-life buckets. Prompts favor short punchlines, natural Hinglish, concise complementary captions, limited hashtags, and occasional CTAs instead of repetitive attitude lectures or tag-a-friend blocks.
 
-Posts use `scheduled_queue.json`, `content/<id>.txt`, and `images/`; reels use `scheduled_reels_queue.json` and `reels/`. Public raw GitHub URLs use `GITHUB_REPOSITORY` and `GITHUB_REF_NAME`, falling back to `krazzynik/rofolo-ig-automation` and `main`.
+Instagram-only workflows are manual-only and do not have cron schedules. They use the invoking branch, publish content, update the queue, remove the successfully published generated artifacts, and commit those changes back with the built-in GitHub token. No credentials are printed.
 
-Instagram-only queue entries use `pending`, `publishing`, `published`, and `failed`. A creation ID is saved before publishing for safe recovery, and existing `instagram_media_id` entries are skipped. Successful entries store the media ID, timestamp, and publisher; failures store the error and timestamp. Requests have timeouts, bounded retries for transient HTTP errors, and never log access tokens.
+Posts use `scheduled_queue.json`, `content/<id>.txt`, and `images/`; reels use `scheduled_reels_queue.json` and `reels/<filename>`. Cleanup rejects absolute, traversal, symlink, and out-of-directory paths and never runs until a final Instagram media ID has been stored. Failed publication retains all artifacts. A cleanup error is logged but does not mark an already-published item as failed.
 
-Checks: `python -m compileall .` and `python -m unittest discover -s tests`.
+Published Instagram-only records are compacted after success. By default the newest 100 Instagram-only published records are retained; set `INSTAGRAM_ONLY_PUBLISHED_RETENTION` to a larger value when needed. Pending, publishing, failed, and legacy records are never pruned automatically.
+
+Checks:
+
+```text
+python -m compileall .
+python -m unittest discover -s tests
+```
