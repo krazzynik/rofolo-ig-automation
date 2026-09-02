@@ -3,7 +3,7 @@ name: Generate - Reel
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 0 * * *'   # 08:00 Asia/Singapore (UTC+8)
+    - cron: '15 1 * * *'  # 09:15 Asia/Singapore (UTC+8)
     - cron: '0 11 * * *'  # 19:00 Asia/Singapore (UTC+8)
 
 jobs:
@@ -22,15 +22,29 @@ jobs:
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install Pillow moviepy numpy google-genai
+          pip install Pillow moviepy numpy google-genai requests
 
       - name: Generate Reel Video
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python generate_reel.py
 
+      - name: Publish Generated Reel to Instagram
+        id: publish_reel
+        continue-on-error: true
+        env:
+          INSTAGRAM_ONLY_USER_ID: ${{ secrets.INSTAGRAM_ONLY_USER_ID }}
+          INSTAGRAM_ONLY_ACCESS_TOKEN: ${{ secrets.INSTAGRAM_ONLY_ACCESS_TOKEN }}
+          INSTAGRAM_GRAPH_API_VERSION: v23.0
+        run: python schedule_instagram_only_reel.py
+
       - name: Commit Generated Reel and ID State
+        if: always()
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Auto-generated reel assets [skip ci]"
           file_pattern: "reels/* content/* scheduled_reels_queue.json content_state.json"
+
+      - name: Fail if Instagram publishing failed
+        if: steps.publish_reel.outcome == 'failure'
+        run: exit 1
