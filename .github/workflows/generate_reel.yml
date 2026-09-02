@@ -3,7 +3,7 @@ name: Generate - Reel
 on:
   workflow_dispatch:
   schedule:
-    - cron: '15 1 * * *'  # 09:15 Asia/Singapore (UTC+8)
+    - cron: '30 1 * * *'  # 09:30 Asia/Singapore (UTC+8)
     - cron: '0 11 * * *'  # 19:00 Asia/Singapore (UTC+8)
 
 jobs:
