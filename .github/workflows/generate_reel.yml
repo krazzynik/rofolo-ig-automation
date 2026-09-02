@@ -28,6 +28,11 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python generate_reel.py
+      - name: Commit Generated Reel and ID State
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Auto-generated reel assets [skip ci]"
+          file_pattern: "reels/* content/* scheduled_reels_queue.json content_state.json"
 
       - name: Publish Generated Reel to Instagram
         id: publish_reel
@@ -38,12 +43,12 @@ jobs:
           INSTAGRAM_GRAPH_API_VERSION: v23.0
         run: python schedule_instagram_only_reel.py
 
-      - name: Commit Generated Reel and ID State
+      - name: Commit Reel Cleanup and Queue State
         if: always()
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "Auto-generated reel assets [skip ci]"
-          file_pattern: "reels/* content/* scheduled_reels_queue.json content_state.json"
+          commit_message: "Finalize generated reel publishing state [skip ci]"
+          file_pattern: "reels/* scheduled_reels_queue.json"
 
       - name: Fail if Instagram publishing failed
         if: steps.publish_reel.outcome == 'failure'
