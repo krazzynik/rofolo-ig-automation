@@ -261,9 +261,10 @@
   },
   {
     "id": "reel_033",
-    "video_path": "reels/reel_033.mp4",
-    "caption": "No auto-renewal here. 💅\n\n#SorryNotSorry #Boundaries #DesiMemes #Attitude",
-    "status": "pending",
-    "created_at": "2026-09-19 07:40:12"
+    "status": "published",
+    "publisher": "instagram_only",
+    "instagram_creation_id": "18110503939910955",
+    "instagram_media_id": "18214532185353653",
+    "published_at": "2026-09-19T07:40:52+00:00"
   }
 ]
