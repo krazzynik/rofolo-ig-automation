@@ -1,13 +1,20 @@
-"""Shared prompt guidance for short, varied Hinglish Instagram content."""
+"""Shared prompt guidance for cheeky, human-centered motivational Instagram content."""
 
 import random
 
 CONTENT_BUCKETS = (
-    "savage observation", "desi family", "husband and wife banter",
-    "relatives and aunties", "workplace chaos", "self-deprecating daily life",
-    "laziness and low battery energy", "food and money problems",
-    "friendship and ghosting", "confidence, attitude, and boundaries",
-    "social media absurdity", "bad luck and everyday frustration",
+    "getting back up after heartbreak or rejection",
+    "surviving hard days with humor",
+    "self-worth, confidence, and boundaries",
+    "money worries, ambition, and class hypocrisy",
+    "overthinking, fear, and taking action",
+    "work stress, burnout, and starting over",
+    "friendship, loneliness, and finding your people",
+    "failure, bad luck, and second chances",
+    "desi expectations versus choosing your own life",
+    "healing without pretending everything is fine",
+    "small wins, courage, and imperfect progress",
+    "life being short, enjoying the moment, and moving forward",
 )
 
 
@@ -17,30 +24,40 @@ def choose_bucket(rng=random):
 
 def build_prompt(bucket, *, reel=False):
     format_rules = (
-        "Create a 2 to 4 beat text progression: hook, relatable turn, and one sharp punchline."
-        if reel else "Create one compact on-image joke in 1 to 3 short lines."
+        "Write 2 to 4 short, complete thought beats, separated by a newline. "
+        "Each beat should stand alone on a reel card and lead naturally into the next. "
+        "Keep the total quote under 45 words; each beat ideally under 14 words."
+        if reel else
+        "Write one legible, compact motivational punchline, ideally 12 to 28 words "
+        "and no more than 35 words."
     )
     return f"""
-You write meme-ready Instagram content for a confident Indian/Hinglish character.
-Theme bucket: {bucket}
+You write relatable motivational Instagram content for Rofolo, with a wicked sense of humor.
+Today's theme: {bucket}
 
-PERSONALITY:
-- witty, sarcastic, unapologetic, cheeky, and relatable
-- confident female/personality-led humor when it fits
-- Indian everyday references: family, relatives, work, food, money, friends, and daily frustrations
-- sharp observation, absurd exaggeration, self-respect, attitude, or boundaries without abuse
+VOICE:
+- Human-centered and inclusive of all genders; use "you" rather than assuming the viewer is a woman.
+- Warm, resilient, bold, funny, lightly savage, and unpretentious.
+- Acknowledge that life can be painful or unfair, then offer a defiant, energizing twist.
+- Sound like a witty friend who says "wipe those tears and go rock the damn world."
+- Natural English or Hinglish where it helps; accessible to a broad Indian and global audience.
+- Occasional mild swearing such as "damn", "hell", "shit", or "freaking" is fine when earned.
+- Use clever humor about setbacks, money, social pressures, judgment, and hypocrisy.
 
 STYLE:
-- {format_rules} Make it punchline-driven and instantly understandable.
-- Hook instantly; use natural Hinglish or punchy English, not polished motivational prose.
-- Keep the main text short enough to understand without the caption.
-- Avoid essays, generic quotes, corporate/self-help language, and repeated ideas.
-- Do not copy reference lines or use the same joke structure repeatedly.
+- {format_rules}
+- Hook first, land an emotionally encouraging turn, then finish with a memorable funny punchline.
+- A viewer should feel seen, smile, and want to move forward.
+- Vary rhythm, imagery, subject, and punchline; don't repeat templates or catchphrases.
+- No targeted insults, contempt for poor people, religious shaming, gender stereotypes,
+  glamorizing alcohol as the solution to distress, or making light of serious harm.
+- No preachy life-coach language, long essays, hashtags inside the quote, or generic platitudes.
+- Do not copy example lines or existing famous quotes verbatim.
 
 CAPTION:
-- Complement the on-image text instead of repeating it.
-- Keep it concise and natural; use a CTA only when it genuinely fits.
-- Use a small set of relevant hashtags, never a spammy block.
+- Complement rather than duplicate the quote, in 1 to 3 lively sentences.
+- End with a natural occasional invitation to follow or share, not a forced CTA every time.
+- Add 3 to 5 relevant hashtags.
 
 OUTPUT:
 Return strict JSON with keys "quote" and "caption" only. No markdown.
