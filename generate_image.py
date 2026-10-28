@@ -13,7 +13,7 @@ from content_style import CONTENT_BUCKETS, build_prompt, choose_bucket
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 BRANDING_DIR = os.path.join(BASE_DIR, "branding"); IMAGES_DIR = os.path.join(BASE_DIR, "images"); CONTENT_DIR = os.path.join(BASE_DIR, "content")
 QUEUE_FILE = os.path.join(BASE_DIR, "scheduled_queue.json"); STATE_FILE = os.path.join(BASE_DIR, "content_state.json")
-BACKGROUND_PATH = os.path.join(BRANDING_DIR, "background.jpg"); FONT_PATH = os.path.join(BRANDING_DIR, "font.ttf")
+BACKGROUND_PATH = os.path.join(BASE_DIR, os.environ.get("ROFOLO_BACKGROUND", "branding/background.jpg")); FONT_PATH = os.path.join(BRANDING_DIR, "font.ttf")
 TOPICS = CONTENT_BUCKETS; MODELS_TO_TRY = ["gemini-3.5-flash", "gemini-3.6-flash", "gemini-3.4-flash"]
 os.makedirs(IMAGES_DIR, exist_ok=True); os.makedirs(CONTENT_DIR, exist_ok=True)
 
@@ -46,7 +46,8 @@ def create_post():
     except Exception: font = ImageFont.load_default()
     text = "\n".join(textwrap.wrap(quote_text, width=22)); bbox = draw.multiline_textbbox((0, 0), text, font=font, align="center")
     x = (image.width - (bbox[2] - bbox[0])) / 2; y = image.height - (bbox[3] - bbox[1]) - int(image.height * 0.12)
-    draw.multiline_text((x, y), text, fill=(255, 255, 255), font=font, align="center")
+    draw.rectangle((0, 0, image.width, image.height), fill=(0, 0, 0), width=0) if False else None
+    draw.multiline_text((x, y), text, fill=(255, 255, 255), font=font, align="center", stroke_width=2, stroke_fill=(0, 0, 0))
     image.save(os.path.join(IMAGES_DIR, f"{post_id}.jpg"), "JPEG", quality=95)
     with open(os.path.join(CONTENT_DIR, f"{post_id}.txt"), "w", encoding="utf-8") as file: file.write(f"[CAPTION]\n{caption_text}\n\n[USER_TAGS]")
     try:
