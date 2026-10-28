@@ -1,7 +1,6 @@
 import json
 import os
 import random
-import re
 import textwrap
 import time
 from google import genai
@@ -46,7 +45,6 @@ def create_post():
     except Exception: font = ImageFont.load_default()
     text = "\n".join(textwrap.wrap(quote_text, width=22)); bbox = draw.multiline_textbbox((0, 0), text, font=font, align="center")
     x = (image.width - (bbox[2] - bbox[0])) / 2; y = image.height - (bbox[3] - bbox[1]) - int(image.height * 0.12)
-    draw.rectangle((0, 0, image.width, image.height), fill=(0, 0, 0), width=0) if False else None
     draw.multiline_text((x, y), text, fill=(255, 255, 255), font=font, align="center", stroke_width=2, stroke_fill=(0, 0, 0))
     image.save(os.path.join(IMAGES_DIR, f"{post_id}.jpg"), "JPEG", quality=95)
     with open(os.path.join(CONTENT_DIR, f"{post_id}.txt"), "w", encoding="utf-8") as file: file.write(f"[CAPTION]\n{caption_text}\n\n[USER_TAGS]")
