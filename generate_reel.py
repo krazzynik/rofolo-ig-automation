@@ -33,7 +33,7 @@ os.makedirs(CONTENT_DIR, exist_ok=True)
 # A card stays completely still long enough to read; no character-by-character crawl.
 SECONDS_PER_CARD = float(os.environ.get("ROFOLO_SECONDS_PER_CARD", "4.0"))
 CTA_SECONDS = float(os.environ.get("ROFOLO_CTA_SECONDS", "2.5"))
-FOLLOW_TEXT = os.environ.get("ROFOLO_FOLLOW_TEXT", "Follow @rofolo for more ✨")
+FOLLOW_TEXT = os.environ.get("ROFOLO_FOLLOW_TEXT", "Follow @baatein_uncut for more")
 
 
 def get_next_reel_id():
