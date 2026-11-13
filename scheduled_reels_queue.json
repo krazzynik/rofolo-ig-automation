@@ -897,7 +897,11 @@
     "id": "reel_104",
     "video_path": "reels/reel_104.mp4",
     "caption": "Loneliness is just your soul refusing to settle for shallow connections. Hold out for the ones who bring snacks and match your vibe. Send this to the friend who makes the world a little less terrifying.\n\n#BaateinUncut #FindingYourPeople #Friendship #RealTalk #KeepItReal",
-    "status": "pending",
-    "created_at": "2026-11-13 18:21:38"
+    "status": "failed",
+    "created_at": "2026-11-13 18:21:38",
+    "publisher": "instagram_only",
+    "publishing_started_at": "2026-11-13T18:21:41+00:00",
+    "last_error": "Error validating access token: Session has expired on Saturday, 31-Oct-26 00:52:54 PDT. The current time is Friday, 13-Nov-26 10:21:41 PST.",
+    "failed_at": "2026-11-13T18:21:42+00:00"
   }
 ]
