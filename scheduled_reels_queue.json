@@ -886,7 +886,11 @@
     "id": "reel_103",
     "video_path": "reels/reel_103.mp4",
     "caption": "Your worth isn't measured by unread emails or endless slide decks. Take a step back, recharge, and start fresh on your own terms. Tag a friend who needs a gentle reminder to log off today! #WorkLifeBalance #BurnoutRecovery #BaateinUncut #StartOver",
-    "status": "pending",
-    "created_at": "2026-11-13 10:22:03"
+    "status": "failed",
+    "created_at": "2026-11-13 10:22:03",
+    "publisher": "instagram_only",
+    "publishing_started_at": "2026-11-13T10:22:06+00:00",
+    "last_error": "Error validating access token: Session has expired on Saturday, 31-Oct-26 00:52:54 PDT. The current time is Friday, 13-Nov-26 02:22:06 PST.",
+    "failed_at": "2026-11-13T10:22:06+00:00"
   }
 ]
