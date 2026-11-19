@@ -985,7 +985,11 @@
     "id": "reel_112",
     "video_path": "reels/reel_112.mp4",
     "caption": "You weren't made to be an option or an afterthought. Protect your energy like it's your last slice of pizza, and watch how fast the wrong people filter themselves out. Send this to a friend who needs to stop apologizing for existing today. #BaateinUncut #KnowYourWorth #BoundarySetting #SelfLove",
-    "status": "pending",
-    "created_at": "2026-11-19 19:19:42"
+    "status": "failed",
+    "created_at": "2026-11-19 19:19:42",
+    "publisher": "instagram_only",
+    "publishing_started_at": "2026-11-19T19:19:45+00:00",
+    "last_error": "Error validating access token: Session has expired on Saturday, 31-Oct-26 00:52:54 PDT. The current time is Thursday, 19-Nov-26 11:19:45 PST.",
+    "failed_at": "2026-11-19T19:19:45+00:00"
   }
 ]
