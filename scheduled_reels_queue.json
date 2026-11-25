@@ -1106,7 +1106,11 @@
     "id": "reel_123",
     "video_path": "reels/reel_123.mp4",
     "caption": "Burnout is just your spirit demanding a massive system upgrade. Take a deep breath, close those 47 open tabs, and rewrite your story today. Send this to a friend who desperately needs to log off!\n\n#BaateinUncut #BurnoutRecovery #WorkLifeBalance #StartingOver #MindsetShift",
-    "status": "pending",
-    "created_at": "2026-11-25 20:21:41"
+    "status": "failed",
+    "created_at": "2026-11-25 20:21:41",
+    "publisher": "instagram_only",
+    "publishing_started_at": "2026-11-25T20:21:45+00:00",
+    "last_error": "Error validating access token: Session has expired on Saturday, 31-Oct-26 00:52:54 PDT. The current time is Wednesday, 25-Nov-26 12:21:45 PST.",
+    "failed_at": "2026-11-25T20:21:45+00:00"
   }
 ]
